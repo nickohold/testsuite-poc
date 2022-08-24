@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+    body {
+        height: fit-content;
+    }
+    .flexme {
+        flex: 1;
+    }
+    .buttons-container {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: center;
+        height: 100vh;
+    }
+    .adunitnick {
+        flex: 1;
+        display: flex;
+    }
+    .btn {
+        font-size: 5vh;
+    }
+    </style>
+</head>
+<body>
+    <div class="buttons-container">
+        <div class="adunitnick">
+            <button id="interstitial" class="flexme btn rounded border-primary btn-primary" onclick="loadISAd()" >Load IS Ad</button>
+            <button id="interstitialShow" class="flexme btn rounded border-secondary btn-secondary" onclick="showISAd()" disabled>Show IS Ad</button>
+        </div>
+        <div class="adunitnick">
+            <button id="rewardedVideo" class="flexme btn rounded border-secondary btn-secondary" onclick="showRewardsAd()" disabled>Show & Load RV Ad</button>
+        </div>
+    </div>
+    <script>
+    function AQpostToNative(dict) {
+        if (dict) {
+            console.log("HERE");
+            window.webkit.messageHandlers.testsuiteBridge.postMessage(dict);
+        } else {
+            console.log("Dict is empty. Did not post to native.");
+        }
+    }
+    function loadISAd() {
+        console.log("loadISAd");
+        AQpostToNative({"loadInterstitialAd": {"stam": "mashehu"}});
+    }
+    function showISAd() {
+        console.log("showISAd");
+        AQpostToNative({"showInterstitialAd": {"stam": "mashehu"}});
+    }
+    function showRewardsAd() {
+        console.log("showRewardsAd");
+        adUnitReady("rewardedVideo");
+        AQpostToNative({"showRewardsAd": {"stam": "mashehu"}});
+    }
+    function adUnitReady(btnId) {
+        document.getElementById(btnId).classList.add("btn-success")
+        document.getElementById(btnId).classList.remove("btn-secondary")
+        document.getElementById(btnId).disabled = false
+    }
+    function adUnitFailToLoad(btnId) {
+        document.getElementById(btnId).classList.add("btn-danger")
+        document.getElementById(btnId).classList.remove("btn-secondary")
+    }
+    </script>
+</body>
+</html>

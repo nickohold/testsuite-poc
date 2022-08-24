@@ -1,0 +1,16 @@
+PODS:
+  - IronSourceSDK (7.2.4.0)
+
+DEPENDENCIES:
+  - IronSourceSDK (= 7.2.4.0)
+
+SPEC REPOS:
+  trunk:
+    - IronSourceSDK
+
+SPEC CHECKSUMS:
+  IronSourceSDK: 7cc4c28187764dfdf900dbf3dbd063ba22296bab
+
+PODFILE CHECKSUM: b2d8db6061e32d8311dcd4a31dacc18f3ef4c66b
+
+COCOAPODS: 1.11.3
