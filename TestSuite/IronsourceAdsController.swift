@@ -25,7 +25,8 @@ class IronsourceAdsController: NSObject, ISRewardedVideoDelegate, ISInterstitial
     }
 
     func rewardedVideoHasChangedAvailability(_ available: Bool) {
-        self.runJsInWebView("showRewardsAd()")
+        self.runJsInWebView("adUnitReady('rewardedVideo')")
+        
     }
     
     func didReceiveReward(forPlacement placementInfo: ISPlacementInfo!) {

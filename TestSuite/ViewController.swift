@@ -33,7 +33,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
             configuration: self.getWKWebViewConfiguration()
         )
         self.isWebView.configuration.defaultWebpagePreferences.allowsContentJavaScript = true
-        let url = URL(string: "https://fb78-82-81-228-240.ngrok.io/testHtml.html")!
+        let url = URL(string: "https://run.mocky.io/v3/281b7540-04b9-46cd-8f49-5b4c92cbbf78")!
         let urlReq = URLRequest(url: url)
         self.isWebView.load(urlReq)
         self.view.addSubview(self.isWebView)
@@ -51,14 +51,13 @@ class ViewController: UIViewController, WKScriptMessageHandler {
             let keys = body?.keys
             keys?.forEach({ key in
                 if key.compare("showRewardsAd") == .orderedSame {
-                    print("NICK - Show RV")
                     IronSource.showRewardedVideo(with: self)
                 } else if key.compare("loadInterstitialAd") == .orderedSame {
-                    print("NICK - Load IS")
                     IronSource.loadInterstitial()
                 } else if key.compare("showInterstitialAd") == .orderedSame {
-                    print("NICK - Show IS")
                     IronSource.showInterstitial(with: self)
+                } else if key.compare("hasInterstitial") == .orderedSame {
+                    delegate.runJsInWebView("hasInterstitial(\(IronSource.hasInterstitial()))")
                 } else {
                     print("Dict key was not found in Bridge: \(key)")
                 }

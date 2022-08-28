@@ -32,7 +32,7 @@
     <div class="buttons-container">
         <div class="adunitnick">
             <button id="interstitial" class="flexme btn rounded border-primary btn-primary" onclick="loadISAd()" >Load IS Ad</button>
-            <button id="interstitialShow" class="flexme btn rounded border-secondary btn-secondary" onclick="showISAd()" disabled>Show IS Ad</button>
+            <button id="interstitialShow" class="flexme btn rounded border-secondary btn-secondary" onclick="onISShowClicked()" disabled>Show IS Ad</button>
         </div>
         <div class="adunitnick">
             <button id="rewardedVideo" class="flexme btn rounded border-secondary btn-secondary" onclick="showRewardsAd()" disabled>Show & Load RV Ad</button>
@@ -41,7 +41,6 @@
     <script>
     function AQpostToNative(dict) {
         if (dict) {
-            console.log("HERE");
             window.webkit.messageHandlers.testsuiteBridge.postMessage(dict);
         } else {
             console.log("Dict is empty. Did not post to native.");
@@ -54,6 +53,9 @@
     function showISAd() {
         console.log("showISAd");
         AQpostToNative({"showInterstitialAd": {"stam": "mashehu"}});
+    }
+    function onISShowClicked() {
+        AQpostToNative({"hasInterstitial": ""});
     }
     function showRewardsAd() {
         console.log("showRewardsAd");
@@ -68,6 +70,13 @@
     function adUnitFailToLoad(btnId) {
         document.getElementById(btnId).classList.add("btn-danger")
         document.getElementById(btnId).classList.remove("btn-secondary")
+    }
+    function hasInterstitial(isISLoaded) {
+        if (isISLoaded) {
+            showISAd()
+        } else {
+            console.log("No IS ad loaded.")
+        }
     }
     </script>
 </body>
