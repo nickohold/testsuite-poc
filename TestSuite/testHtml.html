@@ -3,39 +3,87 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
 	<title></title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <style>
-    body {
-        height: fit-content;
+    * {
+        touch-action: manipulation;
+    }
+    body, html{
+        margin:0;
+        padding:0;
+        width:100%;
+        height:100%;
+        overflow: auto;
     }
     .flexme {
         flex: 1;
     }
-    .buttons-container {
+    .interstitial-container {
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
         justify-content: center;
         height: 100vh;
     }
+    .banner-screen {
+        width: 100%;
+        height: 100%;
+        background-color: gray;
+        z-index: 1000;
+        position: absolute;
+        top: 0;
+        opacity: 85%;
+    }
     .adunitnick {
         flex: 1;
         display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
     }
-    .btn {
-        font-size: 5vh;
+    button, .btn {
+        font-size: 7vmin;
+    }
+    #banner-placeholder {
+        width: 320px;
+        height: 50px;
+        top: 50%;
+        background-color: black;
+        position: absolute;
+    }
+    .destroy-btn {
+        padding: 0 20vw;
+        position: absolute;
+        bottom: 5%;
+        width: -webkit-fill-available;
+    }
+    .destroy-btn-div {
+        position: relative;
+        margin: 0;
+        height: 100%;
+        width: 100%;
     }
     </style>
 </head>
 <body>
-    <div class="buttons-container">
-        <div class="adunitnick">
-            <button id="interstitial" class="flexme btn rounded border-primary btn-primary" onclick="loadISAd()" >Load IS Ad</button>
+    <div id="interstitial-container" class="interstitial-container">
+        <div id="interstitial-adunit" class="adunitnick">
+            <button id="interstitialLoad" class="flexme btn rounded border-primary btn-primary" onclick="loadISAd()" >Load IS Ad</button>
             <button id="interstitialShow" class="flexme btn rounded border-secondary btn-secondary" onclick="onISShowClicked()" disabled>Show IS Ad</button>
         </div>
-        <div class="adunitnick">
+        <div id="rewarded-adunit" class="adunitnick">
             <button id="rewardedVideo" class="flexme btn rounded border-secondary btn-secondary" onclick="showRewardsAd()" disabled>Show & Load RV Ad</button>
+        </div>
+        <div id="banner-adunit" class="adunitnick">
+            <button id="bannerLoad" class="flexme btn rounded border-primary btn-primary" onclick="loadBannerAd()">Load Banner</button>
+            <button id="bannerShow" class="flexme btn rounded border-secondary btn-secondary" onclick="showBannerAd()" disabled>Show Banner</button>
+        </div>
+    </div>
+    <div id="banner-screen" class="banner-screen d-none">
+        <div id="banner-placeholder"></div>
+        <div class="destroy-btn-div" onclick="destroyBanner()">
+            <button class="mt-auto destroy-btn">DESTROY!!!!</button>
         </div>
     </div>
     <script>
@@ -46,6 +94,8 @@
             console.log("Dict is empty. Did not post to native.");
         }
     }
+
+    // Interstitial
     function loadISAd() {
         console.log("loadISAd");
         AQpostToNative({"loadInterstitialAd": {"stam": "mashehu"}});
@@ -54,29 +104,82 @@
         console.log("showISAd");
         AQpostToNative({"showInterstitialAd": {"stam": "mashehu"}});
     }
+    function hasInterstitial(isISLoaded) {
+        if (isISLoaded) {
+            showISAd();
+        } else {
+            console.log("No IS ad loaded.");
+        }
+    }
     function onISShowClicked() {
         AQpostToNative({"hasInterstitial": ""});
     }
+
+    // Rewarded video
     function showRewardsAd() {
         console.log("showRewardsAd");
         adUnitReady("rewardedVideo");
         AQpostToNative({"showRewardsAd": {"stam": "mashehu"}});
     }
+
+    // Banner
+    function loadBannerAd() {
+        console.log("showBannerAd");
+        AQpostToNative({"loadBannerAd": {"width": 320, "height": 50}})
+    }
+    function showBannerAd() {
+        console.log("showBannerAd");
+        let bannerScreen = document.getElementById("banner-screen");
+        bannerScreen.classList.remove("d-none");
+        let bannerDiv = document.getElementById("banner-placeholder");
+        let {
+            width: bannerParentWidth, 
+            height: bannerParentHeight
+        } = bannerScreen.getBoundingClientRect();
+        let {
+            width: bannerDivWidth, 
+            height: bannerDivHeight,
+            top: bannerDivTop,
+            bottom: bannerDivBottom,
+            left: bannerDivLeft,
+            right: bannerDivRight,
+            x: bannerDivPositionX,
+            y: bannerDivPositionY
+        } = bannerDiv.getBoundingClientRect();
+        let widthScale = bannerParentWidth/bannerDivWidth;
+        let heightScale = bannerParentHeight/bannerDivHeight;
+        let scaleBy = Math.min(widthScale, heightScale);
+        bannerDiv.style.transform = `scale(${scaleBy}, ${scaleBy})`;
+        bannerDiv.style.transformOrigin = "0 0";
+        AQpostToNative({
+            "showBannerAd": {
+                "xPos": bannerDivPositionX, 
+                "yPos": bannerDivPositionY, 
+                "width": bannerDivWidth * scaleBy,
+                "height": bannerDivHeight * scaleBy
+             }
+        });
+
+    }
+
     function adUnitReady(btnId) {
-        document.getElementById(btnId).classList.add("btn-success")
-        document.getElementById(btnId).classList.remove("btn-secondary")
-        document.getElementById(btnId).disabled = false
+        document.getElementById(btnId).classList.add("btn-success");
+        document.getElementById(btnId).classList.remove("btn-secondary");
+        document.getElementById(btnId).disabled = false;
     }
     function adUnitFailToLoad(btnId) {
-        document.getElementById(btnId).classList.add("btn-danger")
-        document.getElementById(btnId).classList.remove("btn-secondary")
+        document.getElementById(btnId).classList.add("btn-danger");
+        document.getElementById(btnId).classList.remove("btn-secondary");
     }
-    function hasInterstitial(isISLoaded) {
-        if (isISLoaded) {
-            showISAd()
-        } else {
-            console.log("No IS ad loaded.")
-        }
+
+    function thisIsJustATest(ISBannerView) {
+        console.log("HERE!!");
+        console.log(ISBannerView);
+    }
+
+    function destroyBanner() {
+        AQpostToNative({"destroyBanner": ""})
+        document.getElementById("banner-screen").classList.add("d-none");
     }
     </script>
 </body>
