@@ -81,24 +81,6 @@ class ViewController: UIViewController, WKScriptMessageHandler {
                 }
 
             }
-//            keys?.forEach({ key in
-//                if key.compare("showRewardsAd") == .orderedSame {
-//                    IronSource.showRewardedVideo(with: self)
-//                } else if key.compare("loadInterstitialAd") == .orderedSame {
-//                    IronSource.loadInterstitial()
-//                } else if key.compare("showInterstitialAd") == .orderedSame {
-//                    IronSource.showInterstitial(with: self)
-//                } else if key.compare("loadBannerAd") == .orderedSame {
-//                    let ISBannerSize: ISBannerSize? = ISBannerSize(width: 320, andHeight: 50)
-//                    IronSource.loadBanner(with: self, size: ISBannerSize!)
-//                } else if key.compare("showBannerAd") == .orderedSame {
-//                    IronSource.showInterstitial(with: self)
-//                } else if key.compare("hasInterstitial") == .orderedSame {
-//                    delegate.runJsInWebView("hasInterstitial(\(IronSource.hasInterstitial()))")
-//                } else {
-//                    print("Dict key was not found in Bridge: \(key)")
-//                }
-//            })
         } else {
             print(message.body as! String)
         }
